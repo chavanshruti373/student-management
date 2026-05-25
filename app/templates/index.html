@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Management System</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Poppins', sans-serif;
+            background:linear-gradient(135deg,#667eea,#764ba2);
+            min-height:100vh;
+            padding:40px;
+        }
+
+        .container{
+            max-width:1200px;
+            margin:auto;
+        }
+
+        .title{
+            text-align:center;
+            color:white;
+            margin-bottom:30px;
+        }
+
+        .title h1{
+            font-size:42px;
+            font-weight:700;
+            margin-bottom:10px;
+        }
+
+        .title p{
+            font-size:18px;
+            opacity:0.9;
+        }
+
+        .card{
+            background:white;
+            border-radius:20px;
+            padding:30px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom:30px;
+        }
+
+        .form-group{
+            display:flex;
+            gap:15px;
+            flex-wrap:wrap;
+        }
+
+        .form-group input{
+            flex:1;
+            min-width:200px;
+            padding:14px;
+            border:2px solid #ddd;
+            border-radius:12px;
+            font-size:16px;
+            transition:0.3s;
+            outline:none;
+        }
+
+        .form-group input:focus{
+            border-color:#667eea;
+            box-shadow:0 0 10px rgba(102,126,234,0.3);
+        }
+
+        .add-btn{
+            background:linear-gradient(135deg,#667eea,#764ba2);
+            color:white;
+            border:none;
+            padding:14px 25px;
+            border-radius:12px;
+            font-size:16px;
+            cursor:pointer;
+            transition:0.3s;
+            font-weight:600;
+        }
+
+        .add-btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            overflow:hidden;
+            border-radius:15px;
+        }
+
+        thead{
+            background:linear-gradient(135deg,#667eea,#764ba2);
+            color:white;
+        }
+
+        th{
+            padding:18px;
+            text-align:center;
+            font-size:16px;
+        }
+
+        td{
+            padding:15px;
+            text-align:center;
+            border-bottom:1px solid #eee;
+        }
+
+        tbody tr{
+            transition:0.3s;
+        }
+
+        tbody tr:hover{
+            background:#f8f9ff;
+            transform:scale(1.01);
+        }
+
+        .table-input{
+            width:100%;
+            padding:10px;
+            border:1px solid #ddd;
+            border-radius:10px;
+            outline:none;
+            font-size:14px;
+        }
+
+        .table-input:focus{
+            border-color:#667eea;
+        }
+
+        .action-buttons{
+            display:flex;
+            justify-content:center;
+            gap:10px;
+        }
+
+        .update-btn{
+            background:#28a745;
+            color:white;
+            border:none;
+            padding:10px 18px;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:600;
+            transition:0.3s;
+        }
+
+        .update-btn:hover{
+            background:#218838;
+            transform:translateY(-2px);
+        }
+
+        .delete-btn{
+            background:#dc3545;
+            color:white;
+            border:none;
+            padding:10px 18px;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:600;
+            transition:0.3s;
+        }
+
+        .delete-btn:hover{
+            background:#c82333;
+            transform:translateY(-2px);
+        }
+
+        .footer{
+            text-align:center;
+            margin-top:20px;
+            color:white;
+            font-size:14px;
+            opacity:0.8;
+        }
+
+        @media(max-width:768px){
+
+            body{
+                padding:20px;
+            }
+
+            .title h1{
+                font-size:30px;
+            }
+
+            .form-group{
+                flex-direction:column;
+            }
+
+            table{
+                display:block;
+                overflow-x:auto;
+            }
+
+            .action-buttons{
+                flex-direction:column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="title">
+            <h1>🎓 Student Management System</h1>
+            <p>Manage student records using Flask + MySQL + Docker</p>
+        </div>
+
+        <div class="card">
+
+            <form action="/add" method="POST">
+
+                <div class="form-group">
+
+                    <input type="text"
+                           name="name"
+                           placeholder="Enter Student Name"
+                           required>
+
+                    <input type="number"
+                           name="age"
+                           placeholder="Enter Age"
+                           required>
+
+                    <input type="text"
+                           name="course"
+                           placeholder="Enter Course"
+                           required>
+
+                    <button class="add-btn" type="submit">
+                        Add Student
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="card">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Course</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for student in students %}
+
+                    <tr>
+
+                        <form action="/update/{{ student[0] }}" method="POST">
+
+                            <td>{{ student[0] }}</td>
+
+                            <td>
+                                <input class="table-input"
+                                       type="text"
+                                       name="name"
+                                       value="{{ student[1] }}">
+                            </td>
+
+                            <td>
+                                <input class="table-input"
+                                       type="number"
+                                       name="age"
+                                       value="{{ student[2] }}">
+                            </td>
+
+                            <td>
+                                <input class="table-input"
+                                       type="text"
+                                       name="course"
+                                       value="{{ student[3] }}">
+                            </td>
+
+                            <td>
+
+                                <div class="action-buttons">
+
+                                    <button class="update-btn" type="submit">
+                                        Update
+                                    </button>
+
+                                    <a href="/delete/{{ student[0] }}">
+
+                                        <button class="delete-btn"
+                                                type="button">
+
+                                            Delete
+
+                                        </button>
+
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </form>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="footer">
+            Flask • MySQL • Docker • Student CRUD Application
+        </div>
+
+    </div>
+
+</body>
+
+</html>
